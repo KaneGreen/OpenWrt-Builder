@@ -5,3 +5,4 @@ RUN apt-get update && \
 RUN adduser runner sudo
 USER runner
 WORKDIR /home/runner
+RUN sudo -E ls /
