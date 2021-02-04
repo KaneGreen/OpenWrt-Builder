@@ -3,7 +3,7 @@ set -x
 set -e
 alias wget="$(which wget) --https-only --retry-connrefused"
 
-# 如果没有环境变量或无效，则默认构建R2S版本
+# 如果没有环境变量或无效，则默认构建R2S版本 TEST
 [ -n "$MYOPENWRTTARGET" ] && [ -d ../SEED/$MYOPENWRTTARGET ] || MYOPENWRTTARGET='R2S'
 echo "==> Now building: $MYOPENWRTTARGET"
 
