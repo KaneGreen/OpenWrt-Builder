@@ -20,23 +20,23 @@ RUN git clone https://github.com/tiagogbarbosa/R2S-OpenWrt .
 RUN sudo chown -R runner:runner ./
 RUN cp -f ./SCRIPTS/01_get_ready.sh ./01_get_ready.sh
 RUN /bin/bash ./01_get_ready.sh
-RUN cd openwrt && \
-    cp -f ../SCRIPTS/*.sh ./ && \
-    /bin/bash ./02_prepare_package.sh
+RUN cd openwrt
+RUN cp -f ../SCRIPTS/*.sh ./
+RUN /bin/bash ./02_prepare_package.sh
 RUN /bin/bash ./03_convert_translation.sh
 RUN /bin/bash ./04_remove_upx.sh
 RUN /bin/bash ./05_create_acl_for_luci.sh -a
-RUN cp -f ../SEED/R2S/config.seed .config && /
-    cat ../SEED/R2S/more.seed >> .config && /
-    make defconfig
+RUN cp -f ../SEED/R2S/config.seed .config
+RUN cat ../SEED/R2S/more.seed >> .config
+RUN make defconfig
 
-RUN let Make_Process=$(nproc)*4 && /
-    make download -j${Make_Process}
+RUN let Make_Process=$(nproc)*4
+RUN make download -j${Make_Process}
 
-RUN let Make_Process=$(nproc)+1 && /
-    make toolchain/install -j${Make_Process}
+RUN let Make_Process=$(nproc)+1
+RUN make toolchain/install -j${Make_Process}
 
 RUN /bin/ls -AF staging_dir/toolchain-*/bin/
 
-RUN let Make_Process=$(nproc)+1 && /
-    make -j${Make_Process} V=w
+RUN let Make_Process=$(nproc)+1
+RUN make -j${Make_Process} V=w
