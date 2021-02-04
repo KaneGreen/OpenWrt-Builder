@@ -14,7 +14,7 @@ RUN sudo -E apt-get install -y asciidoc autoconf automake autopoint binutils bui
 ARG DEBIAN_FRONTEND=noninteractive
 RUN wget -qO - https://raw.githubusercontent.com/friendlyarm/build-env-on-ubuntu-bionic/master/install.sh | sed 's/python-/python3-/g' | /bin/bash
 RUN git config --global user.name 'GitHub Actions' && git config --global user.email 'noreply@github.com'
-RUN sudo -E apt-get install wget git curl rsync
+RUN sudo -E apt-get install -y wget git curl rsync
 RUN sudo -E apt-get clean -y
 
 RUN git clone https://github.com/tiagogbarbosa/R2S-OpenWrt
@@ -22,9 +22,7 @@ WORKDIR R2S-OpenWrt
 RUN sudo chown -R runner:runner ./
 RUN cp -f ./SCRIPTS/01_get_ready.sh ./01_get_ready.sh
 RUN /bin/bash ./01_get_ready.sh
-RUN pwd
 WORKDIR openwrt
-RUN pwd
 RUN cp -f ../SCRIPTS/*.sh ./
 RUN /bin/bash ./02_prepare_package.sh
 RUN /bin/bash ./03_convert_translation.sh
