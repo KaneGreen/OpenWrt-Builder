@@ -14,6 +14,7 @@ RUN sudo -E apt-get install -y asciidoc autoconf automake autopoint binutils bui
 ARG DEBIAN_FRONTEND=noninteractive
 RUN wget -qO - https://raw.githubusercontent.com/friendlyarm/build-env-on-ubuntu-bionic/master/install.sh | sed 's/python-/python3-/g' | /bin/bash
 RUN git config --global user.name 'GitHub Actions' && git config --global user.email 'noreply@github.com'
+RUN sudo -E apt-get install wget git curl rsync
 RUN sudo -E apt-get clean -y
 
 RUN git clone https://github.com/tiagogbarbosa/R2S-OpenWrt
