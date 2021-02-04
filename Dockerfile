@@ -21,7 +21,9 @@ WORKDIR R2S-OpenWrt
 RUN sudo chown -R runner:runner ./
 RUN cp -f ./SCRIPTS/01_get_ready.sh ./01_get_ready.sh
 RUN /bin/bash ./01_get_ready.sh
+RUN pwd
 WORKDIR openwrt
+RUN pwd
 RUN cp -f ../SCRIPTS/*.sh ./
 RUN /bin/bash ./02_prepare_package.sh
 RUN /bin/bash ./03_convert_translation.sh
