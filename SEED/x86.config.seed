@@ -47,6 +47,7 @@ CONFIG_PACKAGE_kmod-usb-net-ipheth=y
 CONFIG_PACKAGE_kmod-usb-net-rndis=y
 CONFIG_PACKAGE_kmod-igc=y
 CONFIG_PACKAGE_kmod-mlx4-core=y
+CONFIG_PACKAGE_kmod-mlx5-core=y
 CONFIG_PACKAGE_kmod-r8125=y
 CONFIG_PACKAGE_kmod-vmxnet3=y
 CONFIG_PACKAGE_kmod-lib-lz4=y
@@ -162,7 +163,7 @@ CONFIG_PACKAGE_bind-host=y
 CONFIG_PACKAGE_block-mount=y
 CONFIG_PACKAGE_coremark=y
 CONFIG_PACKAGE_ethtool=y
-CONFIG_PACKAGE_subconverter=y
+# CONFIG_PACKAGE_subconverter is not set
 CONFIG_PACKAGE_usbmuxd=y
 CONFIG_PACKAGE_xray-core=y
 CONFIG_PACKAGE_zerotier=y

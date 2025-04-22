@@ -5,13 +5,13 @@ chmod 0755 /etc/init.d/*
 uci set system.@system[0].timezone='CST-8'
 uci set system.@system[0].zonename='Asia/Shanghai'
 uci del system.ntp.server
-uci add_list system.ntp.server='ntp2.tencent.com'
 uci add_list system.ntp.server='ntp.ntsc.ac.cn'
+uci add_list system.ntp.server='ntp2.tencent.com'
 uci add_list system.ntp.server='ntp.aliyun.com'
 uci add_list system.ntp.server='cn.ntp.org.cn'
 uci commit system
 # feed
-sed -i 's,downloads.openwrt.org,mirrors.cloud.tencent.com/openwrt,g' /etc/opkg/distfeeds.conf
+sed -i 's,downloads.openwrt.org,mirrors.ustc.edu.cn/openwrt,g' /etc/opkg/distfeeds.conf
 # uhttpd
 uci set uhttpd.main.redirect_https='1'
 uci commit uhttpd

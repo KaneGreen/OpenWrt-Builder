@@ -84,6 +84,8 @@ if [ "${MYOPENWRTTARGET}" == 'R2S' ] ; then
   mv -f ../Immortalwrt_2410/package/boot/arm-trusted-firmware-rockchip ./package/boot/arm-trusted-firmware-rockchip
   sed -i '/REQUIRE_IMAGE_METADATA/d' ./target/linux/rockchip/armv8/base-files/lib/upgrade/platform.sh
 fi
+# Fix missing kmod-drm-lima
+mv -f ../Immortalwrt_2410/package/kernel/linux/modules/video.mk ./package/kernel/linux/modules/video.mk
 
 # 更换 golang 版本
 rm -rf ./feeds/packages/lang/golang
