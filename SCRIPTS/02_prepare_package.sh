@@ -42,8 +42,6 @@ CONFIG_LRNG_SELFTEST=y
 fi
 # WireGuard
 mv -f ../PATCH/kernel/WireGuard/*.patch ./target/linux/generic/hack-6.6/
-# Others
-mv -f ../PATCH/kernel/others/*.patch    ./target/linux/generic/pending-6.6/
 
 ### Fullcone-NAT 部分 ###
 # bcmfullcone
