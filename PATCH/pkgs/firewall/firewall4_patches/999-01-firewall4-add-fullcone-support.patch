@@ -32,7 +32,7 @@ IPv6 traffic do NOT need this FullCone NAT functionality.
 @@ -20,6 +21,8 @@ config zone
  	option input		REJECT
  	option output		ACCEPT
- 	option forward		DROP
+ 	option forward		REJECT
 +	option fullcone4 '1'
 +	option fullcone6 '1'
  	option masq		1
