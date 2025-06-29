@@ -113,15 +113,18 @@ sed -i '/boot()/,+2d' feeds/packages/net/ddns-scripts/files/etc/init.d/ddns
 # IPv6 兼容助手
 patch -p1 < ../PATCH/pkgs/odhcp6c/1002-odhcp6c-support-dhcpv6-hotplug.patch
 # odhcpd IPv6
-mkdir -p package/network/services/odhcpd/patches
-mv -f ../PATCH/pkgs/odhcpd/0001-odhcpd-improve-RFC-9096-compliance.patch ./package/network/services/odhcpd/patches/
-mkdir -p package/network/ipv6/odhcp6c/patches
+mkdir -p  package/network/services/odhcpd/patches
+mv -f  ../PATCH/pkgs/odhcpd/0001-odhcpd-improve-RFC-9096-compliance.patch ./package/network/services/odhcpd/patches/
+wget -P ./package/network/services/odhcpd/patches/ https://github.com/openwrt/odhcpd/pull/219.patch
+wget -P ./package/network/services/odhcpd/patches/ https://github.com/openwrt/odhcpd/pull/242.patch
+mkdir -p  package/network/ipv6/odhcp6c/patches
 wget -P ./package/network/ipv6/odhcp6c/patches/ https://github.com/openwrt/odhcp6c/pull/75.patch
 wget -P ./package/network/ipv6/odhcp6c/patches/ https://github.com/openwrt/odhcp6c/pull/80.patch
 wget -P ./package/network/ipv6/odhcp6c/patches/ https://github.com/openwrt/odhcp6c/pull/82.patch
 wget -P ./package/network/ipv6/odhcp6c/patches/ https://github.com/openwrt/odhcp6c/pull/83.patch
 wget -P ./package/network/ipv6/odhcp6c/patches/ https://github.com/openwrt/odhcp6c/pull/84.patch
 wget -P ./package/network/ipv6/odhcp6c/patches/ https://github.com/openwrt/odhcp6c/pull/90.patch
+wget -P ./package/network/ipv6/odhcp6c/patches/ https://github.com/openwrt/odhcp6c/pull/98.patch
 # watchcat
 echo > ./feeds/packages/utils/watchcat/files/watchcat.config
 
