@@ -40,6 +40,8 @@ CONFIG_LRNG_SELFTEST=y
 # CONFIG_LRNG_SELFTEST_PANIC is not set
 ' >> ./target/linux/generic/config-6.6
 fi
+# PPP: fix IPv6-PD
+wget -qO - https://github.com/immortalwrt/immortalwrt/commit/9d852a05bd50b1c332301eecbcac1fa71be637d6.patch | patch -p1
 # WireGuard
 mv -f ../PATCH/kernel/WireGuard/*.patch ./target/linux/generic/hack-6.6/
 
