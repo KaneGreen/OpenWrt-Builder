@@ -73,7 +73,7 @@ jobs:
       working-directory: ${{ github.workspace }}/openwrt
       run: |
         cp -f ../SCRIPTS/*.sh ./
-        #/bin/bash ./02_prepare_package.sh
+        /bin/bash ./02_prepare_package.sh
 
     - name: Remove Upx
       working-directory: ${{ github.workspace }}/openwrt
