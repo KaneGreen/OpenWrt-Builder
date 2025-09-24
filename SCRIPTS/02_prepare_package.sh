@@ -40,6 +40,10 @@ CONFIG_LRNG_SELFTEST=y
 # CONFIG_LRNG_SELFTEST_PANIC is not set
 ' >> ./target/linux/generic/config-6.6
 fi
+# 6.17 PPP performance
+wget -qO target/linux/generic/pending-6.6/999-1-95d0d094ba26.patch https://github.com/torvalds/linux/commit/95d0d094ba26432ec467e2260f4bf553053f1f8f.patch
+wget -qO target/linux/generic/pending-6.6/999-2-1a3e9b7a6b09.patch https://github.com/torvalds/linux/commit/1a3e9b7a6b09e8ab3d2af019e4a392622685855e.patch
+wget -qO target/linux/generic/pending-6.6/999-3-7eebd219feda.patch https://github.com/torvalds/linux/commit/7eebd219feda99df8292a97faff895a5da8159d6.patch
 # PPP: fix IPv6-PD
 wget -qO - https://github.com/immortalwrt/immortalwrt/commit/9d852a05bd50b1c332301eecbcac1fa71be637d6.patch | patch -p1
 # WireGuard
@@ -116,7 +120,7 @@ sed -i '/boot()/,+2d' feeds/packages/net/ddns-scripts/files/etc/init.d/ddns
 patch -p1 < ../PATCH/pkgs/odhcp6c/1002-odhcp6c-support-dhcpv6-hotplug.patch
 # odhcpd IPv6
 mkdir -p  package/network/services/odhcpd/patches
-mv -f  ../PATCH/pkgs/odhcpd/0001-odhcpd-improve-RFC-9096-compliance.patch ./package/network/services/odhcpd/patches/
+mv -f  ../PATCH/pkgs/odhcpd/001-odhcpd-improve-RFC-9096-compliance.patch ./package/network/services/odhcpd/patches/
 wget -P ./package/network/services/odhcpd/patches/ https://github.com/openwrt/odhcpd/pull/219.patch
 wget -P ./package/network/services/odhcpd/patches/ https://github.com/openwrt/odhcpd/pull/242.patch
 mkdir -p  package/network/ipv6/odhcp6c/patches
