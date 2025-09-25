@@ -1,0 +1,28 @@
+From d76b379ccabb669c37990c9696a54e39c2c81858 Mon Sep 17 00:00:00 2001
+From: Kane Green <737445366KG@Gmail.com>
+Date: Thu, 25 Sep 2025 10:45:50 +0800
+Subject: [PATCH] fix OpenWrt CI build
+
+---
+ src/bootstrap/src/core/config/config.rs | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/src/bootstrap/src/core/config/config.rs b/src/bootstrap/src/core/config/config.rs
+index 6055876c..25cbd0da 100644
+--- a/src/bootstrap/src/core/config/config.rs
++++ b/src/bootstrap/src/core/config/config.rs
+@@ -1676,13 +1676,6 @@ pub fn parse_download_ci_llvm(
+                     );
+                 }
+ 
+-                if b && self.is_running_on_ci {
+-                    // On CI, we must always rebuild LLVM if there were any modifications to it
+-                    panic!(
+-                        "`llvm.download-ci-llvm` cannot be set to `true` on CI. Use `if-unchanged` instead."
+-                    );
+-                }
+-
+                 // If download-ci-llvm=true we also want to check that CI llvm is available
+                 b && llvm::is_ci_llvm_available_for_target(self, asserts)
+             }
+

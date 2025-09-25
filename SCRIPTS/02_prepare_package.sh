@@ -6,6 +6,9 @@ echo "==> Now building: ${MYOPENWRTTARGET}"
 alias wget="$(which wget) --https-only --retry-connrefused"
 set -e
 set -x
+
+# 禁用 Telephony Feeds
+sed -i '/telephony/d' feeds.conf.default
 # 获取 Feeds 更新
 ./scripts/feeds update -a
 ./scripts/feeds install -a
@@ -97,7 +100,7 @@ mv -f ../Openwrt_PKG_Master/lang/golang/ ./feeds/packages/lang/golang/
 # 更换 rust 版本
 rm -rf ./feeds/packages/lang/rust
 mv -f ../Openwrt_PKG_Master/lang/rust/ ./feeds/packages/lang/rust/
-wget -P ./feeds/packages/lang/rust/patches/ https://github.com/rust-lang/rust/commit/e8d97f0731ecae540e3f4089533144df5eb56e85.patch
+mv -f ../PATCH/pkgs/rust/9999-fix-build.patch ./feeds/packages/lang/rust/patches/
 # Node.js 使用预编译二进制
 rm -rf ./feeds/packages/lang/node ./package/new/feeds_packages_lang_node-prebuilt
 mv -f ../OpenWrt-Add/feeds_packages_lang_node-prebuilt/ ./feeds/packages/lang/node/
