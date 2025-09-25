@@ -7,8 +7,9 @@ alias wget="$(which wget) --https-only --retry-connrefused"
 set -e
 set -x
 
-# 禁用 Telephony Feeds
-sed -i '/telephony/d' feeds.conf.default
+# 使用替代的 Feeds 链接
+sed -i 's/git.openwrt.org\/feed/github.com\/openwrt/g'    feeds.conf.default
+sed -i 's/git.openwrt.org\/project/github.com\/openwrt/g' feeds.conf.default
 # 获取 Feeds 更新
 ./scripts/feeds update -a
 ./scripts/feeds install -a
