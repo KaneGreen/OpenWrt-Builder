@@ -126,7 +126,7 @@ sed -i '/boot()/,+2d' feeds/packages/net/ddns-scripts/files/etc/init.d/ddns
 patch -p1 < ../PATCH/pkgs/odhcp6c/1002-odhcp6c-support-dhcpv6-hotplug.patch
 # odhcpd IPv6
 rm -rf ./package/network/services/odhcpd
-mv -rf ../Openwrt_Main/package/network/services/odhcpd ./package/network/services/odhcpd
+mv -f ../Openwrt_Main/package/network/services/odhcpd ./package/network/services/odhcpd
 mkdir -p  package/network/ipv6/odhcp6c/patches
 wget -P ./package/network/ipv6/odhcp6c/patches/ https://github.com/openwrt/odhcp6c/pull/75.patch
 wget -P ./package/network/ipv6/odhcp6c/patches/ https://github.com/openwrt/odhcp6c/pull/80.patch
