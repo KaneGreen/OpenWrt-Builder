@@ -155,7 +155,7 @@ jobs:
         echo "status=success" >> $GITHUB_OUTPUT
 
     - name: Upload Firmwares
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       if: env.UPLOAD_FIRMWARE == 'true' && ${{ success() }}
       with:
         name: OpenWrt_x86_${{ env.FMDATETIME }}
