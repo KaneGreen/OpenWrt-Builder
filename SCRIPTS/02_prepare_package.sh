@@ -86,6 +86,7 @@ fi
 if [ "${MYOPENWRTTARGET}" == 'R2S' ] ; then
   rm -rf ./target/linux/rockchip
   mv -f ../Immortalwrt_2410/target/linux/rockchip ./target/linux/rockchip
+  rm -f ./target/linux/rockchip/patches-6.6/712-phy-rockchip-naneng-combphy-add-sgmii-mac-sel.patch
   mv -f ../PATCH/kernel/Rockchip/*                ./target/linux/rockchip/patches-6.6/
   rm -rf ./package/boot/{rkbin,uboot-rockchip,arm-trusted-firmware-rockchip}
   mv -f ../Immortalwrt_2410/package/boot/uboot-rockchip                ./package/boot/uboot-rockchip
