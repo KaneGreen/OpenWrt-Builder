@@ -129,6 +129,7 @@ rm -rf ./package/network/services/odhcpd
 mv -f ../Openwrt_Main/package/network/services/odhcpd ./package/network/services/odhcpd
 rm -rf ./package/network/ipv6/odhcp6c
 mv -f ../Openwrt_Main/package/network/ipv6/odhcp6c ./package/network/ipv6/odhcp6c
+sed -i 's/=@IPV6 /=/g' package/network/ipv6/odhcp6c/Makefile
 # watchcat
 echo > ./feeds/packages/utils/watchcat/files/watchcat.config
 
