@@ -86,7 +86,6 @@ fi
 if [ "${MYOPENWRTTARGET}" == 'R2S' ] ; then
   rm -rf ./target/linux/rockchip
   mv -f ../Immortalwrt_2410/target/linux/rockchip ./target/linux/rockchip
-  rm -f ./target/linux/rockchip/patches-6.6/712-phy-rockchip-naneng-combphy-add-sgmii-mac-sel.patch
   mv -f ../PATCH/kernel/Rockchip/*                ./target/linux/rockchip/patches-6.6/
   rm -rf ./package/boot/{rkbin,uboot-rockchip,arm-trusted-firmware-rockchip}
   mv -f ../Immortalwrt_2410/package/boot/uboot-rockchip                ./package/boot/uboot-rockchip
@@ -128,14 +127,8 @@ patch -p1 < ../PATCH/pkgs/odhcp6c/1002-odhcp6c-support-dhcpv6-hotplug.patch
 # odhcpd IPv6
 rm -rf ./package/network/services/odhcpd
 mv -f ../Openwrt_Main/package/network/services/odhcpd ./package/network/services/odhcpd
-mkdir -p  package/network/ipv6/odhcp6c/patches
-wget -P ./package/network/ipv6/odhcp6c/patches/ https://github.com/openwrt/odhcp6c/pull/75.patch
-wget -P ./package/network/ipv6/odhcp6c/patches/ https://github.com/openwrt/odhcp6c/pull/80.patch
-wget -P ./package/network/ipv6/odhcp6c/patches/ https://github.com/openwrt/odhcp6c/pull/82.patch
-wget -P ./package/network/ipv6/odhcp6c/patches/ https://github.com/openwrt/odhcp6c/pull/83.patch
-wget -P ./package/network/ipv6/odhcp6c/patches/ https://github.com/openwrt/odhcp6c/pull/84.patch
-wget -P ./package/network/ipv6/odhcp6c/patches/ https://github.com/openwrt/odhcp6c/pull/90.patch
-wget -P ./package/network/ipv6/odhcp6c/patches/ https://github.com/openwrt/odhcp6c/pull/98.patch
+rm -rf ./package/network/ipv6/odhcp6c
+mv -f ../Openwrt_Main/package/network/ipv6/odhcp6c ./package/network/ipv6/odhcp6c
 # watchcat
 echo > ./feeds/packages/utils/watchcat/files/watchcat.config
 
