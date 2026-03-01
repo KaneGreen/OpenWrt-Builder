@@ -115,7 +115,7 @@ jobs:
         /bin/ls -AF staging_dir/toolchain-*/bin/
 
     - name: If Toolchain Error
-      if: steps.maketoolchain.outcome == 'failure'
+      if: ${{ steps.maketoolchain.outcome == 'failure' }}
       working-directory: ${{ github.workspace }}/openwrt
       run: |
         df -h
@@ -132,7 +132,7 @@ jobs:
         echo $?
 
     - name: If Compiling Error
-      if: steps.compileopenwrt.outcome == 'failure'
+      if: ${{ steps.compileopenwrt.outcome == 'failure' }}
       working-directory: ${{ github.workspace }}/openwrt
       run: |
         df -h
@@ -157,7 +157,7 @@ jobs:
 
     - name: Upload Firmwares
       uses: actions/upload-artifact@v7
-      if: env.UPLOAD_FIRMWARE == 'true' && ${{ success() }}
+      if: ${{ env.UPLOAD_FIRMWARE == 'true' && success() }}
       with:
         name: OpenWrt_R2S_${{ env.FMDATETIME }}
         path: ${{ env.FIRMWAREDIR }}
