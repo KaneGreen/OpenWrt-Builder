@@ -98,8 +98,9 @@ mv -f ../Immortalwrt_2410/package/kernel/linux/modules/video.mk ./package/kernel
 # 更换 golang 版本
 rm -rf ./feeds/packages/lang/golang
 mv -f ../Openwrt_PKG_Master/lang/golang/ ./feeds/packages/lang/golang/
-# 修复 Rust 构建
-mv -f ../PATCH/pkgs/rust/9999-fix-ci-build.patch ./feeds/packages/lang/rust/patches/
+# 更换 Rust 版本
+rm -rf ./feeds/packages/lang/rust
+mv -f ../Openwrt_PKG_Master/lang/rust/ ./feeds/packages/lang/rust/
 # Node.js 使用预编译二进制
 rm -rf ./feeds/packages/lang/node ./package/new/feeds_packages_lang_node-prebuilt
 mv -f ../OpenWrt-Add/feeds_packages_lang_node-prebuilt/ ./feeds/packages/lang/node/
