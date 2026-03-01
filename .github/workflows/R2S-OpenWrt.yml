@@ -128,7 +128,7 @@ jobs:
       run: |
         df -h
         make -j$(($(nproc) + 1)) package/network/utils/nftables/refresh V=s
-        make -j$(($(nproc) + 1)) V=w
+        make -j1 V=w
         echo $?
 
     - name: If Compiling Error
