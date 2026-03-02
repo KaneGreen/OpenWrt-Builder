@@ -101,6 +101,7 @@ mv -f ../Openwrt_PKG_Master/lang/golang/ ./feeds/packages/lang/golang/
 # 更换 Rust 版本
 rm -rf ./feeds/packages/lang/rust
 mv -f ../Openwrt_PKG_Master/lang/rust/ ./feeds/packages/lang/rust/
+sed -i 's/--set=llvm\.download-ci-llvm=true/--set=llvm.download-ci-llvm=false/' ./feeds/packages/lang/rust/Makefile
 # Node.js 使用预编译二进制
 rm -rf ./feeds/packages/lang/node ./package/new/feeds_packages_lang_node-prebuilt
 mv -f ../OpenWrt-Add/feeds_packages_lang_node-prebuilt/ ./feeds/packages/lang/node/
