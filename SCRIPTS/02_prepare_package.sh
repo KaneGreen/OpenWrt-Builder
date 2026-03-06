@@ -97,7 +97,7 @@ mv -f ../Immortalwrt_2410/package/kernel/linux/modules/video.mk ./package/kernel
 
 # 更换 golang 版本
 rm -rf ./feeds/packages/lang/golang
-mv -f ../Openwrt_PKG_Master/lang/golang/ ./feeds/packages/lang/golang/
+git clone -b 26.x https://github.com/sbwml/packages_lang_golang feeds/packages/lang/golang
 # 更换 Rust 版本
 rm -rf ./feeds/packages/lang/rust
 mv -f ../Openwrt_PKG_Master/lang/rust/ ./feeds/packages/lang/rust/
