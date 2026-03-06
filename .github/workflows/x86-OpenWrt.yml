@@ -46,7 +46,7 @@ jobs:
         df -h
 
     - name: Maximize build space
-      uses: easimon/maximize-build-space@master
+      uses: smallprogram/maximize-build-space@master
       with:
         root-reserve-mb: 4095
         temp-reserve-mb: 1023
