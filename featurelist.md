@@ -1,7 +1,7 @@
 ## 功能与特性
 
 ### 重要事项
-* R2S 版采用 FriendlyWrt 的默认的 WAN/LAN 口绑定。现在 WAN 口绑定在远离电源接口的那一个 RJ45 上。
+* R2S 版采用 WAN/LAN 口绑定与 FriendlyWrt 默认值不同。现在 WAN 口绑定在靠近电源接口的 RJ45 接口上。
 
 ### 安全性
 * 防火墙设置为默认拒绝来自 WAN 口入站数据和转发。
@@ -12,7 +12,7 @@
 |  |  |  |  |  |  |
 | :---: | :---: | :---: | :---: | :---: | :---: |
 | NetData 监控 | 流量监控 | 释放内存 | 定时重启 | CPU 占用率限制 | 硬盘休眠 |
-| SSRP | OpenClash | 动态 DNS | WOL 网络唤醒 | WireGuard | ZeroTier |
+| SSRP | HomeProxy | OpenClash | 动态 DNS | WOL 网络唤醒 | WireGuard |
 | Aria2 | Samba4 | uHTTPd 配置 | UPnP 配置 | socat | SQM QoS |
 | BBR (1) | FullCone NAT (2) | Offloading (2) | - | - | - |
 

@@ -7,62 +7,46 @@ alias wget="$(which wget) --https-only --retry-connrefused"
 set -e
 set -x
 
+case ${MYOPENWRTTARGET} in
+  R2S)
+    sed -i -e 's/-Os/-O2/g' -e 's,-mcpu=generic,-march=armv8-a,g' ./include/target.mk
+    ;;
+  x86)
+    sed -i -e 's/-Os/-O2 -march=x86-64-v3/g' ./include/target.mk # 不再考虑过于老旧的平台
+    ;;
+esac
+
 # 使用替代的 Feeds 链接
-sed -i 's/git.openwrt.org\/feed/github.com\/openwrt/g'    feeds.conf.default
-sed -i 's/git.openwrt.org\/project/github.com\/openwrt/g' feeds.conf.default
+sed -i -e 's/git.openwrt.org\/feed/github.com\/openwrt/g' -e 's/git.openwrt.org\/project/github.com\/openwrt/g' feeds.conf.default
 # 获取 Feeds 更新
 ./scripts/feeds update -a
 ./scripts/feeds install -a
 
 # 更新 FW4
-#rm -rf ./package/network/config/firewall4
-#cp -rf ../Openwrt_Main/package/network/config/firewall4 ./package/network/config/firewall4
-
-# TCP optimizations
-mv -f ../PATCH/kernel/6.7_Boost_For_Single_TCP_Flow/*.patch                                                ./target/linux/generic/backport-6.6/
-mv -f ../PATCH/kernel/6.8_Boost_TCP_Performance_For_Many_Concurrent_Connections-bp_but_put_in_hack/*.patch ./target/linux/generic/hack-6.6/
-mv -f ../PATCH/kernel/6.8_Better_data_locality_in_networking_fast_paths-bp_but_put_in_hack/*.patch         ./target/linux/generic/hack-6.6/
-# UDP optimizations
-mv -f ../PATCH/kernel/6.7_FQ_packet_scheduling/*.patch ./target/linux/generic/backport-6.6/
+rm -rf ./package/network/config/firewall4
+cp -a ../Openwrt_Main/package/network/config/firewall4 ./package/network/config/firewall4
 # BBR v3
-mv -f ../PATCH/kernel/BBRv3/*.patch                    ./target/linux/generic/backport-6.6/
-if [ "${MYOPENWRTTARGET}" == 'R2S' ] ; then
-# Show ARM64 model name
-  mv -f ../PATCH/kernel/ARM/*.patch                    ./target/linux/generic/hack-6.6/
-else 
-# LRNG
-  mv -f ../PATCH/kernel/LRNG/*.patch                     ./target/linux/generic/hack-6.6/
-  echo '
-# CONFIG_RANDOM_DEFAULT_IMPL is not set
-CONFIG_LRNG=y
-CONFIG_LRNG_DEV_IF=y
-# CONFIG_LRNG_IRQ is not set
-CONFIG_LRNG_JENT=y
-CONFIG_LRNG_CPU=y
-# CONFIG_LRNG_SCHED is not set
-CONFIG_LRNG_SELFTEST=y
-# CONFIG_LRNG_SELFTEST_PANIC is not set
-' >> ./target/linux/generic/config-6.6
-fi
-# 6.17 PPP performance
-wget -qO target/linux/generic/pending-6.6/999-1-95d0d094ba26.patch https://github.com/torvalds/linux/commit/95d0d094ba26432ec467e2260f4bf553053f1f8f.patch
-wget -qO target/linux/generic/pending-6.6/999-2-1a3e9b7a6b09.patch https://github.com/torvalds/linux/commit/1a3e9b7a6b09e8ab3d2af019e4a392622685855e.patch
-wget -qO target/linux/generic/pending-6.6/999-3-7eebd219feda.patch https://github.com/torvalds/linux/commit/7eebd219feda99df8292a97faff895a5da8159d6.patch
-# PPP: fix IPv6-PD
-wget -qO - https://github.com/immortalwrt/immortalwrt/commit/9d852a05bd50b1c332301eecbcac1fa71be637d6.patch | patch -p1
+mv -f ../PATCH/kernel/BBRv3/*.patch                    ./target/linux/generic/backport-6.12/
 # WireGuard
-mv -f ../PATCH/kernel/WireGuard/*.patch ./target/linux/generic/hack-6.6/
+mv -f ../PATCH/kernel/WireGuard/*.patch                ./target/linux/generic/hack-6.12/
+# OTHERS
+cp -rf ../PATCH/kernel/others/*                        ./target/linux/generic/pending-6.12/
+if [ "${MYOPENWRTTARGET}" == 'R2S' ] ; then
+  # Show ARM64 model name
+  mv -f ../PATCH/kernel/ARM/*.patch                    ./target/linux/generic/hack-6.12/
+  # Swap LAN/WAN
+  sed -i "s/ucidef_set_interfaces_lan_wan 'eth1' 'eth0'/ucidef_set_interfaces_lan_wan 'eth0' 'eth1'/g" ./target/linux/rockchip/armv8/base-files/etc/board.d/02_network
+  sed -i -e 's/"green:wan" "eth0"/"green:wan" "eth1"/g' -e 's/"green:lan" "eth1"/"green:lan" "eth0"/g' ./target/linux/rockchip/armv8/base-files/etc/board.d/01_leds
+fi
 
 ### Fullcone-NAT 部分 ###
 # bcmfullcone
-mv -f ../PATCH/kernel/bcmfullcone/* ./target/linux/generic/hack-6.6/
+mv -f ../PATCH/kernel/bcmfullcone/* ./target/linux/generic/hack-6.12/
 # set nf_conntrack_expect_max for fullcone
 wget -qO - https://github.com/openwrt/openwrt/commit/bbf39d07fd43977f55a4b9ba9e384cdf8a0d2b50.patch | patch -p1
 echo "net.netfilter.nf_conntrack_helper = 1"          >> package/kernel/linux/files/sysctl-nf-conntrack.conf
 echo "net.netfilter.nf_conntrack_tcp_max_retrans = 5" >> package/kernel/linux/files/sysctl-nf-conntrack.conf
 # FW4
-mkdir -p package/network/config/firewall4/patches
-mv -f ../PATCH/pkgs/firewall/firewall4_patches/*.patch ./package/network/config/firewall4/patches/
 mkdir -p package/libs/libnftnl/patches
 mv -f ../PATCH/pkgs/firewall/libnftnl/*.patch          ./package/libs/libnftnl/patches/
 sed -i '/PKG_INSTALL:=/iPKG_FIXUP:=autoreconf'         ./package/libs/libnftnl/Makefile
@@ -78,29 +62,21 @@ popd
 wget -qO - https://github.com/openwrt/openwrt/commit/c21a357093afc1ffeec11b6bb63d241899c1cf68.patch | patch -p1
 # igc-fix
 if [ "${MYOPENWRTTARGET}" == 'x86' ] ; then
-  wget -P ./target/linux/x86/patches-6.6/ https://github.com/coolsnowwolf/lede/raw/refs/heads/master/target/linux/x86/patches-6.6/996-intel-igc-i225-i226-disable-eee.patch
+  wget -P ./target/linux/x86/patches-6.12/ https://github.com/coolsnowwolf/lede/raw/refs/heads/master/target/linux/x86/patches-6.12/996-intel-igc-i225-i226-disable-eee.patch
 fi
 
 ### 获取额外的基础软件包 ###
-# 更换为 ImmortalWrt Uboot 以及 Target
 if [ "${MYOPENWRTTARGET}" == 'R2S' ] ; then
-  rm -rf ./target/linux/rockchip
-  mv -f ../Immortalwrt_2410/target/linux/rockchip ./target/linux/rockchip
-  mv -f ../PATCH/kernel/Rockchip/*                ./target/linux/rockchip/patches-6.6/
-  rm -rf ./package/boot/{rkbin,uboot-rockchip,arm-trusted-firmware-rockchip}
-  mv -f ../Immortalwrt_2410/package/boot/uboot-rockchip                ./package/boot/uboot-rockchip
-  mv -f ../Immortalwrt_2410/package/boot/arm-trusted-firmware-rockchip ./package/boot/arm-trusted-firmware-rockchip
   sed -i '/REQUIRE_IMAGE_METADATA/d' ./target/linux/rockchip/armv8/base-files/lib/upgrade/platform.sh
+  wget https://github.com/coolsnowwolf/lede/raw/refs/heads/master/target/linux/rockchip/patches-6.12/991-arm64-dts-rockchip-add-more-cpu-operating-points-for.patch -O target/linux/rockchip/patches-6.12/991.patch
 fi
-# Fix missing kmod-drm-lima
-mv -f ../Immortalwrt_2410/package/kernel/linux/modules/video.mk ./package/kernel/linux/modules/video.mk
 
 # 更换 golang 版本
 rm -rf ./feeds/packages/lang/golang
-git clone -b 26.x https://github.com/sbwml/packages_lang_golang feeds/packages/lang/golang
+mv -f ../Openwrt_PKG_Master/lang/golang/ ./feeds/packages/lang/golang/
 # 更换 Rust 版本
 rm -rf ./feeds/packages/lang/rust
-mv -f ../Openwrt_PKG_Master/lang/rust/ ./feeds/packages/lang/rust/
+mv -f ../Openwrt_PKG_Master/lang/rust/   ./feeds/packages/lang/rust/
 sed -i 's/--set=llvm\.download-ci-llvm=true/--set=llvm.download-ci-llvm=false/' ./feeds/packages/lang/rust/Makefile
 # Node.js 使用预编译二进制
 rm -rf ./feeds/packages/lang/node ./package/new/feeds_packages_lang_node-prebuilt
@@ -113,9 +89,6 @@ rm -rf feeds/packages/utils/coremark
 
 ### 获取额外的 LuCI 应用、主题和依赖 ###
 # mount cgroupv2
-pushd feeds/packages
-  patch -p1 < ../../../PATCH/pkgs/cgroupfs-mount/0001-fix-cgroupfs-mount.patch
-popd
 mkdir -p feeds/packages/utils/cgroupfs-mount/patches
 mv -f ../PATCH/pkgs/cgroupfs-mount/900-mount-cgroup-v2-hierarchy-to-sys-fs-cgroup-cgroup2.patch   ./feeds/packages/utils/cgroupfs-mount/patches/
 mv -f ../PATCH/pkgs/cgroupfs-mount/901-fix-cgroupfs-umount.patch                                  ./feeds/packages/utils/cgroupfs-mount/patches/
@@ -131,7 +104,6 @@ rm -rf ./package/network/services/odhcpd
 mv -f ../Openwrt_Main/package/network/services/odhcpd ./package/network/services/odhcpd
 rm -rf ./package/network/ipv6/odhcp6c
 mv -f ../Openwrt_Main/package/network/ipv6/odhcp6c ./package/network/ipv6/odhcp6c
-sed -i 's/=@IPV6 /=/g' package/network/ipv6/odhcp6c/Makefile
 # watchcat
 echo > ./feeds/packages/utils/watchcat/files/watchcat.config
 
@@ -141,13 +113,8 @@ rm -rf .config
 # 停用内核配置“将所有警告视为错误”，这是因为一些第三方PATCH不够严谨
 sed -i 's,CONFIG_WERROR=y,# CONFIG_WERROR is not set,g' ./target/linux/generic/config-6.6
 # 平台优化
-case ${MYOPENWRTTARGET} in
-  R2S)
-    sed -i -e 's/-Os/-O2/g' -e 's,-mcpu=generic,-march=armv8-a,g' ./include/target.mk
-    ;;
-  x86)
-    sed -i -e 's/-Os/-O2 -march=x86-64-v2/g' ./include/target.mk # 不再考虑过于老旧的平台
-    echo '#!/bin/sh
+if [ "${MYOPENWRTTARGET}" == 'x86' ] ; then
+echo '#!/bin/sh
 # Put your custom commands here that should be executed once
 # the system init finished. By default this file does nothing.
 
@@ -165,8 +132,7 @@ fi
 
 exit 0
 '> ./package/base-files/files/etc/rc.local
-    ;;
-esac
+fi
 
 # 翻译及部分功能优化
 if [ "${MYOPENWRTTARGET}" != 'R2S' ] ; then
@@ -188,6 +154,7 @@ case ${MYOPENWRTTARGET} in
 esac
 jq -r '.linux_kernel.vermagic' profiles.json > .vermagic
 sed -i -e 's/^\(.\).*vermagic$/\1cp $(TOPDIR)\/.vermagic $(LINUX_DIR)\/.vermagic/' include/kernel-defaults.mk
+rm -f profiles.json
 
 # 预配置一些插件
 cp -rf ../PATCH/files ./files
@@ -198,7 +165,7 @@ mv -f ../PRECONFS/vimrc    ./package/base-files/files/root/.vimrc
 mv -f ../PRECONFS/screenrc ./package/base-files/files/root/.screenrc
 
 # 删除多余的代码库
-rm -rf ../Openwrt_Main/ ../Openwrt_PKG_Master/ ../Immortalwrt_2410/ ../Openwrt_Main/ 
+rm -rf ../Openwrt_Main/ ../Openwrt_PKG_Master/
 
 unalias wget
 sync

@@ -15,16 +15,16 @@ https://github.com/KaneGreen/OpenWrt-Builder/actions
 
 2. R2S 版 OpenWrt 内置升级可用。
 
-3. R2S 版不再交换 LAN WAN 网口，和上游定义一致。
+3. R2S 版交换了 LAN WAN 网口，和定义不一致。
 
 4. 遇到上不了网的，请自行排查自己的 IPv6 连接情况，或禁用 IPv6（同时禁用 WAN 和 LAN 的 IPv6）（默认已关闭ipv6的dns解析，手动可以在DHCP/DNS里的高级设置中调整）
 
 5. R2S 版 sys 灯引导时闪烁，启动后常亮，也是上游的设定，有疑问请联系 OpenWrt 官方社区。
 
 ### 版本信息：
-LUCI版本：OpenWrt-24.10
+LUCI版本：OpenWrt-25.12
 
-其他模块版本：OpenWrt-24.10
+其他模块版本：OpenWrt-25.12
 
 ### 特性及功能：
 1. O2 优化级别。R2S 版核心频率 1.5GHz，SquashFS 格式。x86 版 EXT4 格式，非 UEFI 版本。

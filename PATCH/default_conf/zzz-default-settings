@@ -36,6 +36,8 @@ uci commit network
 # PASSWALL
 [ -f '/usr/share/v2ray/geoip.dat' ] && uci set passwall.@global_rules[0].v2ray_location_asset='/usr/share/v2ray/'
 uci set passwall.@global_subscribe[0].ss_aead_type='shadowsocks-rust'
+uci set passwall.@global_delay[0].start_delay='5'
+uci set passwall.@global_forwarding[0].tcp_redir_ports='1:65535'
 uci commit passwall
 #SSRP IPV6 HACK
 sed -i '/127.255.255.255/d' /etc/config/shadowsocksr
@@ -45,6 +47,7 @@ uci commit shadowsocksr
 sed -i '/log-facility/d' /etc/dnsmasq.conf
 echo 'log-facility=/dev/null' >> /etc/dnsmasq.conf
 /etc/init.d/dnsmasq restart
+/etc/init.d/odhcpd restart
 #nanopi fix
 sed -i 's/eth1/eth1.*/g' /etc/hotplug.d/net/40-net-smp-affinity
 sed -i 's/eth0/eth0.*/g' /etc/hotplug.d/net/40-net-smp-affinity
@@ -54,10 +57,6 @@ sed -i '/sip/d' /etc/modules.d/nf-nathelper-extra
 [ ! -f '/usr/bin/ip' ]       && [ -x '/sbin/ip' ]           && ln -sf /sbin/ip /usr/bin/ip
 [ ! -f '/usr/bin/wget-ssl' ] && [ -x '/usr/bin/wget' ]      && ln -sf /usr/bin/wget /usr/bin/wget-ssl
 [ ! -f '/usr/sbin/trojan' ]  && [ -x '/usr/bin/trojan-go' ] && ln -sf /usr/bin/trojan-go /usr/bin/trojan
-# opkg hold patched packages
-opkg flag hold dnsmasq-full
-opkg flag hold firewall
-opkg flag hold luci-app-firewall
 # disable wrtbwmon auto-start
 uci del wrtbwmon.general.enabled
 uci commit wrtbwmon
@@ -66,6 +65,8 @@ uci commit wrtbwmon
 /etc/init.d/haproxy stop 2>/dev/null
 /etc/init.d/socat disable 2>/dev/null
 /etc/init.d/socat stop 2>/dev/null
+/etc/init.d/fa-rk3328-pwmfan disable 2>/dev/null
+/etc/init.d/fa-rk3328-pwmfan stop
 # delete luci cache
 rm -rf /tmp/luci-modulecache
 rm  -f /tmp/luci-indexcache
