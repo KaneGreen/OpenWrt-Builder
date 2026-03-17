@@ -111,7 +111,7 @@ echo > ./feeds/packages/utils/watchcat/files/watchcat.config
 # 删除已有配置
 rm -rf .config
 # 停用内核配置“将所有警告视为错误”，这是因为一些第三方PATCH不够严谨
-sed -i 's,CONFIG_WERROR=y,# CONFIG_WERROR is not set,g' ./target/linux/generic/config-6.6
+sed -i 's,CONFIG_WERROR=y,# CONFIG_WERROR is not set,g' ./target/linux/generic/config-6.12
 # 平台优化
 if [ "${MYOPENWRTTARGET}" == 'x86' ] ; then
 echo '#!/bin/sh
