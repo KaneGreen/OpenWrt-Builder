@@ -49,7 +49,6 @@ CONFIG_OPENSSL_ENGINE=y
 CONFIG_PACKAGE_libopenssl-conf=y
 CONFIG_PACKAGE_libopenssl-oqsprovider=y
 CONFIG_PACKAGE_libopenssl-afalg=y
-CONFIG_PACKAGE_libopenssl-gost_engine=y
 CONFIG_PACKAGE_libopenssl-legacy=y
 CONFIG_PACKAGE_libopenssl-devcrypto=y
 CONFIG_PACKAGE_glib2=y
