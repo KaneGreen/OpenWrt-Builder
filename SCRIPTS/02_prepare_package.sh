@@ -38,6 +38,10 @@ if [ "${MYOPENWRTTARGET}" == 'R2S' ] ; then
   sed -i "s/ucidef_set_interfaces_lan_wan 'eth1' 'eth0'/ucidef_set_interfaces_lan_wan 'eth0' 'eth1'/g" ./target/linux/rockchip/armv8/base-files/etc/board.d/02_network
   sed -i -e 's/"green:wan" "eth0"/"green:wan" "eth1"/g' -e 's/"green:lan" "eth1"/"green:lan" "eth0"/g' ./target/linux/rockchip/armv8/base-files/etc/board.d/01_leds
 fi
+# NETKIT
+echo '
+CONFIG_NETKIT=y
+' >> ./target/linux/generic/config-6.12
 
 ### Fullcone-NAT 部分 ###
 # bcmfullcone
@@ -146,15 +150,13 @@ source ../OPENWRT_GIT_TAG
 LATESTRELEASE=${LATESTRELEASE:1}
 case ${MYOPENWRTTARGET} in
   R2S)
-    wget "https://downloads.openwrt.org/releases/${LATESTRELEASE}/targets/rockchip/armv8/profiles.json"
+    curl -L "https://downloads.openwrt.org/releases/${LATESTRELEASE}/targets/rockchip/armv8/profiles.json" | jq -r '.linux_kernel.vermagic' > .vermagic
     ;;
   x86)
-    wget "https://downloads.openwrt.org/releases/${LATESTRELEASE}/targets/x86/64/profiles.json"
+    curl -L "https://downloads.openwrt.org/releases/${LATESTRELEASE}/targets/x86/64/profiles.json" | jq -r '.linux_kernel.vermagic' > .vermagic
     ;;
 esac
-jq -r '.linux_kernel.vermagic' profiles.json > .vermagic
 sed -i -e 's/^\(.\).*vermagic$/\1cp $(TOPDIR)\/.vermagic $(LINUX_DIR)\/.vermagic/' include/kernel-defaults.mk
-rm -f profiles.json
 
 # 预配置一些插件
 cp -rf ../PATCH/files ./files
