@@ -41,6 +41,7 @@ fi
 # NETKIT
 echo '
 CONFIG_NETKIT=y
+CONFIG_IPV6_MULTIPLE_TABLES=y
 ' >> ./target/linux/generic/config-6.12
 
 ### Fullcone-NAT 部分 ###
