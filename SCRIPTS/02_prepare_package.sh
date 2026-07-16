@@ -124,15 +124,20 @@ echo '#!/bin/sh
 # the system init finished. By default this file does nothing.
 
 if grep -q "Default string" /tmp/sysinfo/model 2> /dev/null; then
-    echo should be fine
-else
     echo "Generic PC" > /tmp/sysinfo/model
 fi
 
-status=$(cat /sys/devices/system/cpu/intel_pstate/status)
-
-if [ "$status" = "passive" ]; then
-    echo "active" | tee /sys/devices/system/cpu/intel_pstate/status
+PSTATE_STATUS_FILE="/sys/devices/system/cpu/intel_pstate/status"
+if [ -f "$PSTATE_STATUS_FILE" ]; then
+    if [ "$(cat "$PSTATE_STATUS_FILE")" = "passive" ]; then
+        echo "active" > "$PSTATE_STATUS_FILE"
+    fi
+    for cpu_gov in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do
+        [ -f "$cpu_gov" ] && echo "powersave" > "$cpu_gov"
+    done
+    for cpu_epp in /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference; do
+        [ -f "$cpu_epp" ] && echo "balance_performance" > "$cpu_epp"
+    done
 fi
 
 exit 0
