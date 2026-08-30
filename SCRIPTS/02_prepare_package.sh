@@ -38,6 +38,11 @@ if [ "${MYOPENWRTTARGET}" == 'R2S' ] ; then
   sed -i "s/ucidef_set_interfaces_lan_wan 'eth1' 'eth0'/ucidef_set_interfaces_lan_wan 'eth0' 'eth1'/g" ./target/linux/rockchip/armv8/base-files/etc/board.d/02_network
   sed -i -e 's/"green:wan" "eth0"/"green:wan" "eth1"/g' -e 's/"green:lan" "eth1"/"green:lan" "eth0"/g' ./target/linux/rockchip/armv8/base-files/etc/board.d/01_leds
 fi
+# NETKIT
+echo '
+CONFIG_NETKIT=y
+CONFIG_IPV6_MULTIPLE_TABLES=y
+' >> ./target/linux/generic/config-6.12
 
 ### Fullcone-NAT 部分 ###
 # bcmfullcone
@@ -119,15 +124,20 @@ echo '#!/bin/sh
 # the system init finished. By default this file does nothing.
 
 if grep -q "Default string" /tmp/sysinfo/model 2> /dev/null; then
-    echo should be fine
-else
     echo "Generic PC" > /tmp/sysinfo/model
 fi
 
-status=$(cat /sys/devices/system/cpu/intel_pstate/status)
-
-if [ "$status" = "passive" ]; then
-    echo "active" | tee /sys/devices/system/cpu/intel_pstate/status
+PSTATE_STATUS_FILE="/sys/devices/system/cpu/intel_pstate/status"
+if [ -f "$PSTATE_STATUS_FILE" ]; then
+    if [ "$(cat "$PSTATE_STATUS_FILE")" = "passive" ]; then
+        echo "active" > "$PSTATE_STATUS_FILE"
+    fi
+    for cpu_gov in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do
+        [ -f "$cpu_gov" ] && echo "powersave" > "$cpu_gov"
+    done
+    for cpu_epp in /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference; do
+        [ -f "$cpu_epp" ] && echo "balance_performance" > "$cpu_epp"
+    done
 fi
 
 exit 0
@@ -146,15 +156,13 @@ source ../OPENWRT_GIT_TAG
 LATESTRELEASE=${LATESTRELEASE:1}
 case ${MYOPENWRTTARGET} in
   R2S)
-    wget "https://downloads.openwrt.org/releases/${LATESTRELEASE}/targets/rockchip/armv8/profiles.json"
+    curl -L "https://downloads.openwrt.org/releases/${LATESTRELEASE}/targets/rockchip/armv8/profiles.json" | jq -r '.linux_kernel.vermagic' > .vermagic
     ;;
   x86)
-    wget "https://downloads.openwrt.org/releases/${LATESTRELEASE}/targets/x86/64/profiles.json"
+    curl -L "https://downloads.openwrt.org/releases/${LATESTRELEASE}/targets/x86/64/profiles.json" | jq -r '.linux_kernel.vermagic' > .vermagic
     ;;
 esac
-jq -r '.linux_kernel.vermagic' profiles.json > .vermagic
 sed -i -e 's/^\(.\).*vermagic$/\1cp $(TOPDIR)\/.vermagic $(LINUX_DIR)\/.vermagic/' include/kernel-defaults.mk
-rm -f profiles.json
 
 # 预配置一些插件
 cp -rf ../PATCH/files ./files
