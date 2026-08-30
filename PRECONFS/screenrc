@@ -1,2 +1,1 @@
-termcapinfo xterm*|rxvt*|kterm*|Eterm* ti@:te@
 hardstatus alwayslastline "%{.bG} %H  %{.bW}%-Lw%{.rW}%n %t%{-}%+Lw %=%{..G} %S %{..Y} %m/%d %c "
